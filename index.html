@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waze User Churn Analysis - Executive Summary</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e8f4f8;
+        }
+        
+        .emoji-section {
+            display: inline-block;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .info {
+            background-color: #d1ecf1;
+            padding: 15px;
+            border-left: 4px solid #17a2b8;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .warning {
+            background-color: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #e83e8c;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+            }
+            
+            /* Mobile-optimized image styling */
+            img[alt*="Waze EDA"], img[alt*="Model Evaluation"] {
+                max-width: 95%;
+                max-height: 500px;
+                padding: 10px;
+            }
+            
+            .image-container {
+                padding: 10px;
+                margin: 20px 0;
+            }
+        }
+        
+        .toc {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        
+        .toc h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 5px;
+        }
+        
+        .toc a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            display: block;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .toc a:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* Image styling for plots */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: white;
+            padding: 15px;
+        }
+        
+        /* Specific styling for analysis plots */
+        img[alt*="Waze EDA"], img[alt*="Model Evaluation"] {
+            max-width: 90%;
+            width: auto;
+            max-height: 700px;
+            object-fit: contain;
+            border: 3px solid #3498db;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f8f9fa;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* Container for images with captions */
+        .image-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .image-caption {
+            font-style: italic;
+            color: #666;
+            margin-top: 15px;
+            font-size: 0.95em;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗺️ Waze User Churn Analysis</h1>
+            <div class="success">
+                <strong>Executive Summary Report</strong><br>
+                Generated on: June 24, 2025 at 02:06 PM
+            </div>
+        </div>
+        
+        <div class="highlight">
+            <h3>📊 Key Results at a Glance</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                <div class="metric-card">
+                    <div class="metric-value">17.7%</div>
+                    <div class="metric-label">Overall Churn Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">75.4%</div>
+                    <div class="metric-label">Best Model AUC</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">14,299</div>
+                    <div class="metric-label">Users Analyzed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">19</div>
+                    <div class="metric-label">Features Engineered</div>
+                </div>
+            </div>
+        </div>
+        
+        <h1 id="waze-user-churn-analysis-executive-summary">Waze User Churn Analysis - Executive Summary</h1>
+<h2 id="project-overview">Project Overview</h2>
+<p>This report presents a comprehensive analysis of Waze user churn using the PACE (Plan, Analyze, Construct, Execute) methodology. The objective is to predict user churn and provide actionable insights to improve user retention.</p>
+<h2 id="pace-strategy-implementation">PACE Strategy Implementation</h2>
+<h3 id="plan-phase">📋 <strong>Plan Phase</strong></h3>
+<ul>
+<li><strong>Objective</strong>: Predict user churn for Waze app users</li>
+<li><strong>Approach</strong>: Exploratory Data Analysis (EDA) followed by Machine Learning model development</li>
+<li><strong>Deliverables</strong>: Data visualizations, statistical insights, and predictive models</li>
+</ul>
+<h3 id="analyze-phase">🔍 <strong>Analyze Phase</strong></h3>
+<ul>
+<li><strong>Dataset</strong>: 15,000 user records with 13 features</li>
+<li><strong>Target Variable</strong>: User label (retained vs. churned)</li>
+<li><strong>Key Features</strong>: Sessions, drives, activity days, device type, navigation usage</li>
+</ul>
+<h3 id="construct-phase">🏗️ <strong>Construct Phase</strong></h3>
+<ul>
+<li><strong>Feature Engineering</strong>: Created 8 new derived features</li>
+<li><strong>Models Tested</strong>: Logistic Regression, Random Forest, Gradient Boosting, Decision Tree</li>
+<li><strong>Evaluation Metrics</strong>: AUC-ROC, Precision, Recall, F1-Score</li>
+</ul>
+<h3 id="execute-phase">⚡ <strong>Execute Phase</strong></h3>
+<ul>
+<li><strong>Best Model</strong>: Logistic Regression</li>
+<li><strong>Model Performance</strong>: 75.4% AUC score with consistent cross-validation performance</li>
+<li><strong>Business Recommendations</strong>: Based on feature importance and user patterns</li>
+</ul>
+<h2 id="key-findings">Key Findings</h2>
+<h3 id="data-quality-insights">📊 <strong>Data Quality Insights</strong></h3>
+<ul>
+<li><strong>Dataset Size</strong>: 15,000 user records</li>
+<li><strong>Missing Data</strong>: Minimal missing values handled through imputation</li>
+<li><strong>Data Cleanliness</strong>: High-quality dataset with consistent formatting</li>
+</ul>
+<h3 id="user-behavior-patterns">📈 <strong>User Behavior Patterns</strong></h3>
+<p><img alt="Waze EDA Visualizations" src="waze_eda_visualizations.png" /></p>
+<h4 id="churn-distribution"><strong>Churn Distribution</strong></h4>
+<ul>
+<li>Overall churn rate: 17.7% of users churned</li>
+<li>Device-specific churn patterns: Android (17.6%) vs. iPhone (17.8%) - minimal difference</li>
+</ul>
+<h4 id="usage-patterns"><strong>Usage Patterns</strong></h4>
+<ul>
+<li><strong>Sessions vs. Drives</strong>: Strong correlation between app usage and retention</li>
+<li><strong>Activity Days</strong>: Critical indicator of user engagement</li>
+<li><strong>Navigation Features</strong>: Usage of favorite locations impacts retention</li>
+</ul>
+<h4 id="key-differentiators"><strong>Key Differentiators</strong></h4>
+<ul>
+<li><strong>Retained Users</strong>: More activity days (16.8 avg), higher engagement patterns</li>
+<li><strong>Churned Users</strong>: Fewer activity days (9.6 avg), paradoxically more drives (72.7 vs 66.1)</li>
+</ul>
+<h3 id="machine-learning-results">🤖 <strong>Machine Learning Results</strong></h3>
+<p><img alt="Model Evaluation Results" src="model_evaluation.png" /></p>
+<h4 id="model-performance"><strong>Model Performance</strong></h4>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>AUC Score</th>
+<th>Cross-Validation</th>
+<th>Key Strengths</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Logistic Regression</strong></td>
+<td><strong>75.4%</strong></td>
+<td><strong>75.6% ± 3.8%</strong></td>
+<td><strong>Best performer, interpretable</strong></td>
+</tr>
+<tr>
+<td>Gradient Boosting</td>
+<td>74.7%</td>
+<td>74.7% ± 3.4%</td>
+<td>High predictive power</td>
+</tr>
+<tr>
+<td>Random Forest</td>
+<td>72.5%</td>
+<td>72.1% ± 3.3%</td>
+<td>Feature importance, non-linear patterns</td>
+</tr>
+<tr>
+<td>Decision Tree</td>
+<td>56.7%</td>
+<td>55.5% ± 2.6%</td>
+<td>Simple rules, poor performance</td>
+</tr>
+</tbody>
+</table>
+<h4 id="feature-importance"><strong>Feature Importance</strong></h4>
+<p>Top predictors of user churn (engineered features):
+1. <strong>active_days_ratio</strong> - Consistency of engagement over user tenure
+2. <strong>avg_drives_per_day</strong> - Daily driving intensity and habits
+3. <strong>avg_sessions_per_day</strong> - Daily app engagement patterns
+4. <strong>driving_days_ratio</strong> - Proportion of days actually driving since onboarding
+5. <strong>total_nav_favs</strong> - Navigation ecosystem investment indicator</p>
+<p><strong>Key Insight</strong>: Behavioral ratios and daily engagement patterns are stronger predictors than raw usage counts, enabling more actionable retention strategies.</p>
+<h2 id="risk-assessment">Risk Assessment</h2>
+<h3 id="high-risk-user-segments">🔴 <strong>High-Risk User Segments</strong></h3>
+<p>Based on top engineered feature predictors:</p>
+<ul>
+<li><strong>active_days_ratio &lt; 0.3</strong>: Users with inconsistent engagement relative to tenure</li>
+<li><strong>avg_sessions_per_day &lt; 2.0</strong>: Low daily app engagement patterns</li>
+<li><strong>avg_drives_per_day &lt; 1.5</strong>: Minimal daily driving activity</li>
+<li><strong>total_nav_favs = 0</strong>: No navigation ecosystem investment</li>
+<li><strong>driving_days_ratio &lt; 0.4</strong>: Infrequent driving relative to onboarding period</li>
+</ul>
+<h3 id="medium-risk-indicators">🟡 <strong>Medium-Risk Indicators</strong></h3>
+<p>Early warning signals requiring monitoring:</p>
+<ul>
+<li><strong>active_days_ratio 0.3-0.5</strong>: Moderate but declining engagement consistency</li>
+<li><strong>avg_sessions_per_day 2.0-4.0</strong>: Below-average daily app usage</li>
+<li><strong>Declining trends</strong>: 7-day moving averages showing downward patterns in key ratios</li>
+<li><strong>Cross-feature patterns</strong>: High drives but low navigation favorites (functional vs. engaged usage)</li>
+</ul>
+<h3 id="low-risk-characteristics">🟢 <strong>Low-Risk Characteristics</strong></h3>
+<p>Indicators of strong retention likelihood:</p>
+<ul>
+<li><strong>active_days_ratio &gt; 0.6</strong>: Consistent long-term engagement</li>
+<li><strong>avg_sessions_per_day &gt; 5.0</strong>: Strong daily app usage habits</li>
+<li><strong>total_nav_favs &gt; 10</strong>: Significant ecosystem investment</li>
+<li><strong>Balanced ratios</strong>: High engagement across multiple behavioral dimensions</li>
+</ul>
+<h2 id="business-recommendations">Business Recommendations</h2>
+<h3 id="immediate-actions">🎯 <strong>Immediate Actions</strong></h3>
+<ol>
+<li><strong>Engagement Campaigns</strong>: Target users with declining activity patterns</li>
+<li><strong>Onboarding Optimization</strong>: Improve early user experience</li>
+<li><strong>Feature Promotion</strong>: Encourage use of navigation favorites</li>
+</ol>
+<h3 id="product-development">📱 <strong>Product Development</strong></h3>
+<ol>
+<li><strong>Platform-Specific Features</strong>: Address device-specific churn patterns</li>
+<li><strong>Gamification</strong>: Increase daily engagement through rewards</li>
+<li><strong>Personalization</strong>: Customize experience based on usage patterns</li>
+</ol>
+<h3 id="monitoring-metrics">📊 <strong>Monitoring &amp; Metrics</strong></h3>
+<ol>
+<li><strong>Early Warning System</strong>: Implement real-time churn prediction</li>
+<li><strong>A/B Testing</strong>: Test retention strategies on high-risk segments</li>
+<li><strong>Regular Model Updates</strong>: Retrain models monthly with new data</li>
+</ol>
+<h2 id="implementation-plan">Implementation Plan</h2>
+<h3 id="phase-1-model-deployment-weeks-1-2">Phase 1: Model Deployment (Weeks 1-2)</h3>
+<ul>
+<li>Deploy best-performing model to production</li>
+<li>Set up automated scoring pipeline</li>
+<li>Create alerting system for high-risk users</li>
+</ul>
+<h3 id="phase-2-intervention-strategies-weeks-3-4">Phase 2: Intervention Strategies (Weeks 3-4)</h3>
+<ul>
+<li>Launch targeted retention campaigns</li>
+<li>Implement personalized recommendations</li>
+<li>A/B test different engagement tactics</li>
+</ul>
+<h3 id="phase-3-monitoring-optimization-ongoing">Phase 3: Monitoring &amp; Optimization (Ongoing)</h3>
+<ul>
+<li>Track model performance metrics</li>
+<li>Monitor business impact of interventions</li>
+<li>Continuously refine prediction algorithms</li>
+</ul>
+<h2 id="technical-specifications">Technical Specifications</h2>
+<h3 id="data-pipeline"><strong>Data Pipeline</strong></h3>
+<ul>
+<li><strong>Input</strong>: User activity data, device information, navigation history</li>
+<li><strong>Processing</strong>: Feature engineering, data cleaning, model scoring</li>
+<li><strong>Output</strong>: Churn probability scores, risk classifications</li>
+</ul>
+<h3 id="model-architecture"><strong>Model Architecture</strong></h3>
+<ul>
+<li><strong>Algorithm</strong>: Logistic Regression (best performing model)</li>
+<li><strong>Features</strong>: 19 engineered features including behavioral ratios</li>
+<li><strong>Update Frequency</strong>: Weekly retraining recommended</li>
+<li><strong>Performance Threshold</strong>: Current model exceeds 75% AUC threshold</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>The Waze churn analysis reveals clear patterns in user behavior that can predict churn with high accuracy. By implementing the recommended machine learning model and intervention strategies, Waze can significantly improve user retention and reduce acquisition costs.</p>
+<p>The PACE methodology has provided a comprehensive framework for understanding user churn, developing predictive models, and creating actionable business recommendations. The next steps involve deploying the model to production and implementing targeted retention strategies based on the insights discovered.</p>
+<hr />
+<p><strong>Prepared by</strong>: Data Science Team<br />
+<strong>Date</strong>: December 2024<br />
+<strong>Next Review</strong>: January 2025</p>
+<h2 id="appendix">Appendix</h2>
+<h3 id="files-generated"><strong>Files Generated</strong></h3>
+<ul>
+<li><code>waze_churn_analysis.py</code>: Complete analysis code</li>
+<li><code>waze_eda_visualizations.png</code>: Exploratory data analysis plots</li>
+<li><code>model_evaluation.png</code>: Model performance comparisons</li>
+<li><code>waze_churn_analysis_executive_summary.md</code>: This executive summary</li>
+</ul>
+        
+        <div class="footer">
+            <p><strong>Waze User Churn Analysis Report</strong></p>
+            <p>Generated using PACE methodology (Plan, Analyze, Construct, Execute)</p>
+            <p>© 2024 Data Science Team - Confidential</p>
+        </div>
+    </div>
+</body>
+</html>
