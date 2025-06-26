@@ -128,50 +128,6 @@ python generate_html_report.py
 - `model_evaluation.png` - Model comparison charts
 - `waze_churn_analysis_report.html` - Professional HTML report
 
-## 📊 Visualizations
-
-The analysis generates 9 comprehensive visualizations:
-
-1. **Box Plot of Drives** - Distribution analysis (leadership request)
-2. **Scatter Plot: Drives vs Sessions** - Usage relationship (leadership request)
-3. **Churn Distribution** - Overall churn rate visualization
-4. **Device Distribution by Churn** - Platform analysis
-5. **Activity Days Distribution** - Key predictor analysis
-6. **Driving Behavior Comparison** - Usage pattern analysis
-7. **Correlation Heatmap** - Feature relationship matrix
-8. **Navigation Favorites Analysis** - Ecosystem engagement
-9. **Days After Onboarding** - User lifecycle analysis
-
-## 💼 Business Recommendations
-
-### 🎯 Immediate Actions
-1. **Target High-Risk Users**: Focus on users with <10 activity days
-2. **Engagement Campaigns**: Implement behavioral trigger-based outreach
-3. **Onboarding Optimization**: Improve early user experience
-
-### 📱 Product Development
-1. **Promote Navigation Favorites**: Increase ecosystem investment
-2. **Daily Engagement Features**: Focus on consistent daily usage
-3. **Quality over Quantity**: Emphasize meaningful interactions
-
-### 📊 Implementation Strategy
-1. **Real-time Scoring**: Deploy Logistic Regression model for live predictions
-2. **A/B Testing**: Test retention strategies on identified high-risk segments
-3. **Regular Model Updates**: Monthly retraining with new user data
-
-## 🔄 Model Deployment
-
-### Recommended Approach
-- **Model**: Logistic Regression (interpretable and high-performing)
-- **Scoring Frequency**: Real-time or daily batch processing
-- **Threshold**: Probability > 0.5 for churn prediction
-- **Update Schedule**: Monthly retraining recommended
-
-### Risk Segmentation
-- **Low Risk**: active_days_ratio > 0.6, total_nav_favs > 10
-- **Medium Risk**: active_days_ratio 0.3-0.6, moderate engagement
-- **High Risk**: active_days_ratio < 0.3, declining patterns
-
 ## 📋 File Descriptions
 
 | File | Description |
@@ -184,32 +140,8 @@ The analysis generates 9 comprehensive visualizations:
 | `*.png` | Generated visualizations and model evaluation charts |
 | `*.html` | Professional web-ready reports |
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **PACE Methodology**: Google Advanced Data Analytics Certificate framework
-- **Business Stakeholders**: Leadership team for specific visualization requests
-- **Data Science Community**: Open-source tools and methodologies
-
-## 📞 Contact
-
-For questions about this analysis or potential collaboration:
-
-- **Project Repository**: [GitHub Repository URL]
-- **Analysis Date**: 2024
-- **Model Performance**: 75.4% AUC (exceeds 75% threshold)
-
----
 
 **Note**: This project demonstrates end-to-end machine learning workflow from business problem definition to actionable insights and deployment recommendations. 
